@@ -1,0 +1,14 @@
+{
+  "name": "vidjot-udemy",
+  "version": "1.0.0",
+  "description": "A Udemy project using MEN Stack",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "npm": "^6.1.0"
+  }
+}
