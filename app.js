@@ -1,7 +1,16 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 var app = express();
+
+mongoose.Promise = global.Promise;
+
+mongoose.connect("mongodb://localhost:27017/vidjot",{ useNewUrlParser: true }).then(()=>console.log("mongodb running")).catch(err => console.log(err));
+
+
+require('./models/idea');
+const Idea = mongoose.model('ideas');
 
 app.use(bodyParser.urlencoded({
     extended: false
@@ -45,7 +54,12 @@ app.post('/upload', function (req, res) {
 
                 });
             } else {
-                console.log("working");
+                var idea = {
+                    title:req.body.ideaName,
+                    details:req.body.idea
+                }
+                new Idea(idea).save();
+                console.log("Saved");
             }
 
         });
