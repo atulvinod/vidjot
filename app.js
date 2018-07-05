@@ -32,10 +32,19 @@ app.get('/', function (req, res) {
 app.get('/about', function (req, res) {
     res.render('about');
 });
-app.get('/submit', function (req, res) {
+app.get('/ideas/submit', function (req, res) {
     res.render('submitIdea');
 });
-app.post('/upload', function (req, res) {
+app.get('/ideas/view',function(req,res){
+    var idea = Idea.find({}).sort({date:'desc'}).then(ideas =>{
+        res.render('listidea',{
+            ideas:ideas,
+        });
+    });
+  
+    
+});
+app.post('ideas/upload', function (req, res) {
             var errors = [];
             if (!req.body.ideaName) {
                 errors.push({
@@ -59,7 +68,7 @@ app.post('/upload', function (req, res) {
                     details:req.body.idea
                 }
                 new Idea(idea).save();
-                console.log("Saved");
+                res.redirect('/ideas');
             }
 
         });
