@@ -2,10 +2,12 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const methodOverride = require('method-override');
+
 var app = express();
 
-mongoose.Promise = global.Promise;
 
+mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost:27017/vidjot", {
     useNewUrlParser: true
 }).then(() => console.log("mongodb running")).catch(err => console.log(err));
@@ -18,6 +20,8 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
+app.use(methodOverride('_method'));
+
 
 app.engine('handlebars', exphbs({
     defaultLayout: 'main'
@@ -49,7 +53,7 @@ app.get('/ideas/view', function (req, res) {
 
 
 });
-app.post('ideas/upload', function (req, res) {
+app.post('/ideas/upload', function (req, res) {
     var errors = [];
     if (!req.body.ideaName) {
         errors.push({
@@ -70,21 +74,34 @@ app.post('ideas/upload', function (req, res) {
     } else {
         var idea = {
             title: req.body.ideaName,
-            details: req.body.idea
+            details: req.body.idea,
         }
         new Idea(idea).save();
         res.redirect('/ideas/view');
     }
 
 });
-app.get('/ideas/edit/:id', function (req, res) {
-  Idea.findOne({_id:req.params.id,}).then(idea=>{
-      console.log(idea);
-res.render('editpage',{
-    idea:idea
-
+app.get('/ideas/edit/view/:id', (req, res) => {
+    Idea.findOne({
+        _id: req.params.id
+    }).then(function (idea) {
+        res.render('editpage', {
+            idea: idea
+        });
+    })
 });
-  })
+app.put('/ideas/edit/:id', function (req, res) {
+    Idea.findOne({
+        _id: req.params.id
+    }).then(function (idea) {
+        idea.title = req.body.ideaName;
+        idea.details = req.body.idea;
+
+        idea.save().then(function (idea) {
+            console.log("redirect");
+            res.redirect('/ideas/view');
+        })
+    })
 });
 const port = 8080;
 app.listen(port, () => {
