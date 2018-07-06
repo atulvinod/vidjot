@@ -6,41 +6,44 @@ const methodOverride = require('method-override');
 
 var app = express();
 
-
+/* initialise mongoDB*/
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost:27017/vidjot", {
     useNewUrlParser: true
 }).then(() => console.log("mongodb running")).catch(err => console.log(err));
-
-
 require('./models/idea');
 const Idea = mongoose.model('ideas');
 
+/* Initialise body Parser*/
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 
-
+/*Initialise Handlebars template engine */
 app.engine('handlebars', exphbs({
     defaultLayout: 'main'
 }));
 app.set('view engine', 'handlebars');
 
-
-
+// configure root route
 app.get('/', function (req, res) {
     res.render('index', {
         title: "Hello VidJot"
     });
 })
+
+// configure about route
 app.get('/about', function (req, res) {
     res.render('about');
 });
+
+// ideas routes
 app.get('/ideas/submit', function (req, res) {
     res.render('submitIdea');
 });
+
 app.get('/ideas/view', function (req, res) {
 
     var idea = Idea.find({}).sort({
@@ -50,9 +53,8 @@ app.get('/ideas/view', function (req, res) {
             ideas: ideas,
         });
     });
-
-
 });
+
 app.post('/ideas/upload', function (req, res) {
     var errors = [];
     if (!req.body.ideaName) {
@@ -81,6 +83,7 @@ app.post('/ideas/upload', function (req, res) {
     }
 
 });
+
 app.get('/ideas/edit/view/:id', (req, res) => {
     Idea.findOne({
         _id: req.params.id
@@ -103,6 +106,8 @@ app.put('/ideas/edit/:id', function (req, res) {
         })
     })
 });
+
+// initialise server
 const port = 8080;
 app.listen(port, () => {
     console.log("Server started at " + port);
