@@ -1,19 +1,23 @@
-
 <div class="container">
- 
+
     <div class="well" style="box-shadow:0px 0px 5px black">
-        
+
         <form action="/ideas/edit/{{idea.id}}?_method=PUT" method="POST">
-<h1>Edit Idea..</h1><hr>
-<input type="hidden" name="_method" value="PUT">
+            <h1>Edit Idea..</h1>
+            <hr>
+            <input type="hidden" name="_method" value="PUT">
             <label for="ideaName">Idea Name</label>
             <input type="text" name="ideaName" id="" class="form-control" required value="{{idea.title}}">
-            <br><hr>
-            <label for="idea">Idea</label>
-            <textarea name="idea" id="" class="form-control" required >{{idea.details}}</textarea>
             <br>
-  
+            <hr>
+            <label for="idea">Idea</label>
+            <textarea name="idea" id="" class="form-control" required>{{idea.details}}</textarea>
+            <br>
+
 
             <input type="submit" name="" id="" class="btn btn-primary" value="Save Changes">
 
         </form>
+
+
+    </div>

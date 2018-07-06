@@ -3,8 +3,24 @@ const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
-
+const expressSession = require('express-session');
+const flash = require('connect-flash');
 var app = express();
+
+app.use(expressSession({
+    secret:'super duper secret',
+    resave:true,
+    saveUninitialized:true
+
+}));
+app.use(flash());
+
+app.use(function(req,res,next){
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.del_success = req.flash('del_success');
+    next();
+});
 
 /* initialise mongoDB*/
 mongoose.Promise = global.Promise;
@@ -13,6 +29,7 @@ mongoose.connect("mongodb://localhost:27017/vidjot", {
 }).then(() => console.log("mongodb running")).catch(err => console.log(err));
 require('./models/idea');
 const Idea = mongoose.model('ideas');
+
 
 /* Initialise body Parser*/
 app.use(bodyParser.urlencoded({
@@ -78,6 +95,7 @@ app.post('/ideas/upload', function (req, res) {
             title: req.body.ideaName,
             details: req.body.idea,
         }
+        req.flash('success_msg','Added');
         new Idea(idea).save();
         res.redirect('/ideas/view');
     }
@@ -93,6 +111,7 @@ app.get('/ideas/edit/view/:id', (req, res) => {
         });
     })
 });
+// ideas to be edited
 app.put('/ideas/edit/:id', function (req, res) {
     Idea.findOne({
         _id: req.params.id
@@ -104,6 +123,22 @@ app.put('/ideas/edit/:id', function (req, res) {
             console.log("redirect");
             res.redirect('/ideas/view');
         })
+    })
+});
+
+app.delete('/ideas/edit/:id', function (req, res) {
+    Idea.remove({
+        _id: req.params.id
+    }).then(function (i) {
+        req.flash('del_success',"deletion success");
+        Idea.find({}).sort({
+            date: 'desc'
+        }).then(ideas => {
+          
+            res.render('listidea', {
+                ideas: ideas,
+            });
+        });
     })
 });
 
