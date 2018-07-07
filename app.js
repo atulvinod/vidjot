@@ -5,7 +5,11 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const expressSession = require('express-session');
 const flash = require('connect-flash');
+
+const ideaRoutes = require('./routes/ideas.js');
+const userRoutes = require('./routes/users.js');
 var app = express();
+
 
 app.use(expressSession({
     secret:'super duper secret',
@@ -38,11 +42,17 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 
+
+
 /*Initialise Handlebars template engine */
 app.engine('handlebars', exphbs({
     defaultLayout: 'main'
 }));
 app.set('view engine', 'handlebars');
+
+// configure idea routes and user routes via router
+app.use('/ideas',ideaRoutes);
+app.use('/users',userRoutes);
 
 // configure root route
 app.get('/', function (req, res) {
@@ -56,91 +66,7 @@ app.get('/about', function (req, res) {
     res.render('about');
 });
 
-// ideas routes
-app.get('/ideas/submit', function (req, res) {
-    res.render('submitIdea');
-});
 
-app.get('/ideas/view', function (req, res) {
-
-    var idea = Idea.find({}).sort({
-        date: 'desc'
-    }).then(ideas => {
-        res.render('listidea', {
-            ideas: ideas,
-        });
-    });
-});
-
-app.post('/ideas/upload', function (req, res) {
-    var errors = [];
-    if (!req.body.ideaName) {
-        errors.push({
-            text: "Enter a Name for the idea"
-        });
-    }
-    if (!req.body.idea) {
-        errors.push({
-            text: "Enter the idea discription"
-        });
-    }
-
-    if (errors.length > 0) {
-        res.render('submitIdea', {
-            error: errors,
-
-        });
-    } else {
-        var idea = {
-            title: req.body.ideaName,
-            details: req.body.idea,
-        }
-        req.flash('success_msg','Added');
-        new Idea(idea).save();
-        res.redirect('/ideas/view');
-    }
-
-});
-
-app.get('/ideas/edit/view/:id', (req, res) => {
-    Idea.findOne({
-        _id: req.params.id
-    }).then(function (idea) {
-        res.render('editpage', {
-            idea: idea
-        });
-    })
-});
-// ideas to be edited
-app.put('/ideas/edit/:id', function (req, res) {
-    Idea.findOne({
-        _id: req.params.id
-    }).then(function (idea) {
-        idea.title = req.body.ideaName;
-        idea.details = req.body.idea;
-
-        idea.save().then(function (idea) {
-            console.log("redirect");
-            res.redirect('/ideas/view');
-        })
-    })
-});
-
-app.delete('/ideas/edit/:id', function (req, res) {
-    Idea.remove({
-        _id: req.params.id
-    }).then(function (i) {
-        req.flash('del_success',"deletion success");
-        Idea.find({}).sort({
-            date: 'desc'
-        }).then(ideas => {
-          
-            res.render('listidea', {
-                ideas: ideas,
-            });
-        });
-    })
-});
 
 // initialise server
 const port = 8080;
