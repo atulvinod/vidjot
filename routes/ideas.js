@@ -3,15 +3,19 @@ const router = express.Router();
 const mongoose = require('mongoose');
 require('../models/idea');
 const Idea = mongoose.model('ideas');
+const {ensureAuth} = require("../config/auth");
+
+
+
 
 // ideas routes
-router.get('/submit', function (req, res) {
+router.get('/submit',ensureAuth, function (req, res) {
     res.render('submitIdea');
 });
 
-router.get('/view', function (req, res) {
+router.get('/view',ensureAuth, function (req, res) {
 
-    var idea = Idea.find({}).sort({
+    var idea = Idea.find({user:res.locals.user.user}).sort({
         date: 'desc'
     }).then(ideas => {
         res.render('listidea', {
@@ -20,7 +24,7 @@ router.get('/view', function (req, res) {
     });
 });
 
-router.post('/upload', function (req, res) {
+router.post('/upload',ensureAuth, function (req, res) {
     var errors = [];
     if (!req.body.ideaName) {
         errors.push({
@@ -39,9 +43,12 @@ router.post('/upload', function (req, res) {
 
         });
     } else {
+        console.log(res.locals.user.user);
         var idea = {
+           
             title: req.body.ideaName,
             details: req.body.idea,
+            user:res.locals.user.user,
         }
         req.flash('success_msg','Added');
         new Idea(idea).save();
@@ -50,7 +57,7 @@ router.post('/upload', function (req, res) {
 
 });
 
-router.get('/edit/view/:id', (req, res) => {
+router.get('/edit/view/:id',ensureAuth, (req, res) => {
     Idea.findOne({
         _id: req.params.id
     }).then(function (idea) {
@@ -60,7 +67,7 @@ router.get('/edit/view/:id', (req, res) => {
     })
 });
 // ideas to be edited
-router.put('/edit/:id', function (req, res) {
+router.put('/edit/:id',ensureAuth, function (req, res) {
     Idea.findOne({
         _id: req.params.id
     }).then(function (idea) {
@@ -68,13 +75,13 @@ router.put('/edit/:id', function (req, res) {
         idea.details = req.body.idea;
 
         idea.save().then(function (idea) {
-            console.log("redirect");
+            
             res.redirect('/ideas/view');
         })
     })
 });
 
-router.delete('/edit/:id', function (req, res) {
+router.delete('/edit/:id',ensureAuth, function (req, res) {
     req.flash('success_msg',"deletion success");
     Idea.remove({
         _id: req.params.id
@@ -84,9 +91,8 @@ router.delete('/edit/:id', function (req, res) {
             date: 'desc'
         }).then(ideas => {
            
-            res.render('listidea', {
-                ideas: ideas,
-            });
+            res.redirect('/ideas/view');
+           
         });
     })
 });

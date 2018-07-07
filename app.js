@@ -9,6 +9,7 @@ const passport = require('passport');
 require('./config/passport')(passport);
 const ideaRoutes = require('./routes/ideas.js');
 const userRoutes = require('./routes/users.js');
+
 var app = express();
 
 
@@ -18,6 +19,8 @@ app.use(expressSession({
     saveUninitialized:true
 
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(flash());
 
 app.use(function(req,res,next){
@@ -25,6 +28,8 @@ app.use(function(req,res,next){
     res.locals.error_msg = req.flash('error_msg');
     res.locals.del_success = req.flash('del_success');
     res.locals.user = req.user || null;
+   
+ 
     next();
 });
 
@@ -44,8 +49,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 /*Initialise Handlebars template engine */
 app.engine('handlebars', exphbs({

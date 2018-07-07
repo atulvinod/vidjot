@@ -4,7 +4,9 @@
         <div class="container-fluid">
 
             <ul class="nav navbar-nav pull-right">
-                <li>
+               {{#if user}}
+               <li><a href="/users/logout">Logout </a></li>
+                  <li>
                     <a href="/">Home</a>
                 </li>
                 <li>
@@ -19,6 +21,12 @@
                         <li><a href="/ideas/view">View Ideas</a></li>
                     </ul>
                 </li>
+                {{else}}
+                <li><a href="/users/login">Login</a></li>
+                <li><a href="/users/signup">Sign Up</a></li>
+               {{/if}}
+                
+             
 
             </ul>
             <div class="navbar-header">
