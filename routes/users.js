@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const passport = require('passport-local');
+const passport = require('passport');
 
 require('../models/user')
 const User = mongoose.model('user');
@@ -15,7 +15,12 @@ router.get('/signup', (req, res) => {
     res.render('signup');
 
 });
-router.post('/login', function (req, res) {
+router.post('/login', function (req, res,next) {
+    passport.authenticate('local',{
+        successRedirect:'/ideas/view',
+        failureRedirect:'/users/login',
+        failureFlash:true,
+    })(req,res,next);
 
 });
 router.post('/signup', function (req, res) {

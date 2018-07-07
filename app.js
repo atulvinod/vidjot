@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const expressSession = require('express-session');
 const flash = require('connect-flash');
-
+const passport = require('passport');
+require('./config/passport')(passport);
 const ideaRoutes = require('./routes/ideas.js');
 const userRoutes = require('./routes/users.js');
 var app = express();
@@ -23,6 +24,7 @@ app.use(function(req,res,next){
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
     res.locals.del_success = req.flash('del_success');
+    res.locals.user = req.user || null;
     next();
 });
 
@@ -42,7 +44,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 
-
+app.use(passport.initialize());
+app.use(passport.session());
 
 /*Initialise Handlebars template engine */
 app.engine('handlebars', exphbs({
