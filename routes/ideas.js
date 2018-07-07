@@ -75,14 +75,15 @@ router.put('/edit/:id', function (req, res) {
 });
 
 router.delete('/edit/:id', function (req, res) {
+    req.flash('success_msg',"deletion success");
     Idea.remove({
         _id: req.params.id
     }).then(function (i) {
-        req.flash('del_success',"deletion success");
+        
         Idea.find({}).sort({
             date: 'desc'
         }).then(ideas => {
-          
+           
             res.render('listidea', {
                 ideas: ideas,
             });

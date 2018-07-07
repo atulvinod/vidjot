@@ -1,15 +1,10 @@
 {{#if success_msg}}
 <div class="alert alert-success">
-    Video idea added
+    {{success_msg}}
 </div>
 {{/if}}
 {{#if error_msg}}
 <div class="alert alert-danger">
-    Unexpected error occured
+    {{error_msg}}
 </div>
 {{/if}} 
-{{#if del_success}}
-<div class="alert alert-success">
-    Video idea deleted
-</div>
-{{/if}}
