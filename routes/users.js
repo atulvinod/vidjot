@@ -23,10 +23,14 @@ res.redirect('/users/login');
 router.post('/login', function (req, res,next) {
     passport.authenticate('local',{
         successRedirect:'/ideas/view',
-        failureRedirect:'/users/login',
+        failureRedirect:'/users/loginFail',
         failureFlash:true,
     })(req,res,next);
 
+});
+router.get('/loginFail',function(req,res){
+    
+res.render('loginFail');
 });
 router.post('/signup', function (req, res) {
     User.findOne({

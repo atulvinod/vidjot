@@ -9,9 +9,10 @@ const passport = require('passport');
 require('./config/passport')(passport);
 const ideaRoutes = require('./routes/ideas.js');
 const userRoutes = require('./routes/users.js');
+const path = require('path')
 
 var app = express();
-
+app.use(express.static('public'));
 
 app.use(expressSession({
     secret:'super duper secret',
@@ -21,8 +22,8 @@ app.use(expressSession({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
 
+app.use(flash());
 app.use(function(req,res,next){
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
@@ -35,7 +36,7 @@ app.use(function(req,res,next){
 
 /* initialise mongoDB*/
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://localhost:27017/vidjot", {
+mongoose.connect("mongodb://atulvinod:Atulvinod%407@ds231941.mlab.com:31941/vidjot", {
     useNewUrlParser: true
 }).then(() => console.log("mongodb running")).catch(err => console.log(err));
 require('./models/idea');
@@ -57,15 +58,15 @@ app.engine('handlebars', exphbs({
 }));
 app.set('view engine', 'handlebars');
 
+
+
 // configure idea routes and user routes via router
 app.use('/ideas',ideaRoutes);
 app.use('/users',userRoutes);
 
 // configure root route
 app.get('/', function (req, res) {
-    res.render('index', {
-        title: "Hello VidJot"
-    });
+    res.render('home');
 })
 
 // configure about route
