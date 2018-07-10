@@ -1,10 +1,12 @@
-<div class="container-fluid" style="margin-top:5px">
+<div class=" " style="margin-top:5px">
     <nav class="navbar navbar-inverse " style="padding:2px;border:2px solid black ">
 
         <div class="container-fluid">
-
+            
             <ul class="nav navbar-nav pull-right">
                {{#if user}}
+               <li style="border-radius:10px;"><a href=""><b><i><span style="color:floralwhite">Welcome! {{user.user}}</span></i></b></a></li>
+               
                <li><a href="/users/logout">Logout </a></li>
             
                 <li>
@@ -30,9 +32,12 @@
             <div class="navbar-header">
                 <a href="/" class="navbar-brand" style="margin-left:10px;font-size:25px">
                     <strong>
-                        <span style="color:white;font-family:'Arial'">\\ VidJot</span>
-                    </strong>
+                        <span style="color:white;font-family:'Arial'">\\ VidJot  </span>
+                    </strong> 
+
+          
                 </a>
+            
             </div>
         </div>
     </nav>
