@@ -36,7 +36,7 @@ app.use(function(req,res,next){
 
 /* initialise mongoDB*/
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://atulvinod:Atulvinod%407@ds231941.mlab.com:31941/vidjot", {
+mongoose.connect("DATABASE LINK HERE", {
     useNewUrlParser: true
 }).then(() => console.log("mongodb running")).catch(err => console.log(err));
 require('./models/idea');
